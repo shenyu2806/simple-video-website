@@ -27,11 +27,11 @@ router.get('/getIndex', async (req, res) => {
             perweek7,
             theatre_comic
         ] = await Promise.all([
-            queryPromise("select cover,id,title from animation order by createtime desc limit 4"),
-            queryPromise("select detailed.cover,detailed.id,detailed.season,detailed.title from detailed INNER JOIN animation on detailed.title = animation.title where region='中国'"),
-            queryPromise("select cover,id,season,title,date,description from animation order by viewing desc limit 5"),
-            queryPromise("select cover,id,season,title from animation where season = '完结' limit 5"),
-            queryPromise("select cover,id,season,title from animation order by createtime desc limit 5"),
+            queryPromise("select cover,id,title from animation order by createtime desc limit 7"),
+            queryPromise("select detailed.cover,detailed.id,detailed.season,detailed.title from detailed INNER JOIN animation on detailed.title = animation.title where region='中国' limit 6"),
+            queryPromise("select cover,id,season,title,date,description from animation order by viewing desc limit 4"),
+            queryPromise("select cover,id,season,title from animation where season = '完结' limit 4"),
+            queryPromise("select cover,id,season,title from animation order by createtime desc limit 4"),
             queryPromise("select id,season,title from animation where updatetime = '周一'"),
             queryPromise("select id,season,title from animation where updatetime = '周二'"),
             queryPromise("select id,season,title from animation where updatetime = '周三'"),
@@ -39,7 +39,7 @@ router.get('/getIndex', async (req, res) => {
             queryPromise("select id,season,title from animation where updatetime = '周五'"),
             queryPromise("select id,season,title from animation where updatetime = '周六'"),
             queryPromise("select id,season,title from animation where updatetime = '周天'"),
-            queryPromise("select cover,id,season,title from animation where recommend = 1")
+            queryPromise("select cover,id,season,title from animation where recommend = 1 limit 4")
         ]);
 
         // 组织响应数据

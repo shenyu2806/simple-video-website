@@ -3,11 +3,14 @@ const fs = require('fs');
 const path = require('path');
 // 导入 cors 中间件——支持跨域访问
 const cors = require('cors')
-
+const bodyParser = require('body-parser')
  
 const app = express();
 const port = 1008;
 app.use(cors()) 
+
+app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.json())
 
 //静态托管
 const multer = require("multer")
@@ -25,6 +28,8 @@ const adminRouter =require('./router/admin')
 app.use('/admin',adminRouter)
 const videoRouter =require('./router/video_list')
 app.use('/video',videoRouter)
+const excelRouter =require('./router/excel')
+app.use('/excel',excelRouter)
  
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

@@ -3,166 +3,192 @@ const router = express.Router()
 const fs = require('fs');
 const image = require("imageinfo");
 
-//登录
-router.post('/login', (req, res) => {
+const getCodeOfRandom = () => {
+	// 所需随机抽取的样本数组
+	const nums = new Array("q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+	// 初始化 拼接字符串
+	let str = "";
+	for (let i = 0; i < 4; i++) {
+		// 每次生成一个0 - 61 之间的 number 作为随机获取验证码的下标
+		const p = Math.floor(Math.random() * 1000) % 36;
+		// 拼接验证码  随机抽取大小写字母和数字
+		str += nums[p];
+	}
+	return str;
+};
+
+//验证码获取
+router.post('/getCaptchaCode', (req, res) => {
     res.send(
         {
-            "code": "00000",
-            "data": {
-                "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImRlcHRJZCI6MSwiZGF0YVNjb3BlIjoxLCJleHAiOjE3MjQ3NDQxODEsInVzZXJJZCI6MiwiaWF0IjoxNzI0NzM2OTgxLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sImp0aSI6IjFmNzdjZWM3NDlkMjQ1Yjc5MDY5ZWNlNmQzZWRlZGIwIn0.dKO6Xxk7UOGkuoZA751A57TpFQOPJadoqQOHNG_kgiQ",
-                "tokenType": "Bearer",
-                "refreshToken": null,
-                "expires": null
+            "status": {
+                "error_code": 0,
+                "error_msg": "success"
             },
-            "msg": "一切ok"
+            "obj": {
+                "code_key": "6012e9ba65b442d2e5e7fec6e8eabcfd",
+                "code": getCodeOfRandom()//验证码
+            }
         }
     )
 });
 
 //用户登录
-router.get('/users/me', (req, res) => {
+router.post('/login', (req, res) => {
+    const { username,password,captcha_code,code_key } = req.body;
     res.send(
         {
-            "code": "00000",
-            "data": {
-                "userId": 2,
-                "username": "admin",
-                "nickname": "系统管理员",
-                "avatar": "https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif",
-                "roles": [
-                    "ADMIN"
-                ],
-                "perms": []
+            "status": {
+                "error_code": 0,
+                "error_msg": "success"
             },
-            "msg": "一切ok"
+            "obj": {
+                "sys_token": "d33a7fdf547d2a086a96f4d38253cbc9",
+                "admin_nick_name": "神月恭平",
+                "admin_id": "1",
+                "avatar": "https://foruda.gitee.com/avatar/1723290893308622047/8841114_fs529_1723290893.png!avatar200"
+            }
         }
     )
 });
+router.post('/getPermission', (req, res) => {
+res.send({status: {
+    error_code: 0,
+    error_msg: "success"
+},
+obj: [
+    {
+        id: "1",
+        name: "权限管理",
+        parent_id: "0",
+        type: "1",
+        url: "/adminAuth/getRoleList",
+        icon: "permission",
+        children: [
+            // {
+            //     id: "1-1",
+            //     name: "角色列表",
+            //     parent_id: "1",
+            //     type: "2",
+            //     url: "/adminAuth/getRoleList",
+            //     icon: "permission",
+            //     hidden: true,
+            //     buttonList: [
+            //         {
+            //             id: "1-1-1",
+            //             name: "查询",
+            //             parent_id: "2",
+            //             type: "3",
+            //             url: "/adminAuth/getRoleList",
+            //             hidden: true
+            //         },
+            //         {
+            //             id: "1-1-2",
+            //             name: "配置权限",
+            //             parent_id: "2",
+            //             type: "3",
+            //             url: "/adminAuth/setting",
+            //             hidden: true
+            //         }
+            //     ]
+            // },
+            // {
+            //     id: "1-2",
+            //     name: "账号列表",
+            //     parent_id: "1",
+            //     icon: "permission",
+            //     type: "2",
+            //     url: "/adminAuth/adminList",
+            //     hidden: true,
+            //     buttonList: [
+            //         {
+            //             id: "1-2-1",
+            //             name: "查询",
+            //             parent_id: "1-2",
+            //             type: "3",
+            //             url: "/adminAuth/list",
+            //             hidden: true
+            //         },
+            //         {
+            //             id: "1-2-2",
+            //             name: "查看",
+            //             parent_id: "1-2",
+            //             type: "3",
+            //             url: "/adminAuth/look",
+            //             hidden: true
+            //         },
+            //         {
+            //             id: "1-2-3",
+            //             name: "角色",
+            //             parent_id: "1-2",
+            //             type: "3",
+            //             url: "/adminAuth/role",
+            //             hidden: true
+            //         },
+            //         {
+            //             id: "1-2-4",
+            //             name: "删除",
+            //             parent_id: "1-2",
+            //             type: "3",
+            //             url: "/adminAuth/del",
+            //             hidden: true
+            //         }
+            //     ]
+            // },
+            {
+                id: "1-3",
+                name: "权限列表",
+                icon: "permission",
+                parent_id: "1",
+                type: "2",
+                url: "/adminAuth/permissionList"
 
-router.get('/menus/routes', (req, res) => {
-    res.send({
-        "code": "00000",
-            "data": [
-                {
-                    "path": "/system",
-                    "component": "Layout",
-                    "redirect": "/system/user",
-                    "name": "/system",
-                    "meta": {
-                        "title": "系统管理",
-                        "icon": "system",
-                        "hidden": false,
-                        "alwaysShow": false,
-                        "params": null
-                    },
-                    "children": [
-                        {
-                            "path": "user",
-                            "component": "system/user/index",
-                            "name": "User",
-                            "meta": {
-                                "title": "用户管理",
-                                "icon": "el-icon-User",
-                                "hidden": false,
-                                "keepAlive": true,
-                                "alwaysShow": false,
-                                "params": null
-                            }
-                        },
-                        {
-                            "path": "role",
-                            "component": "system/role/index",
-                            "name": "Role",
-                            "meta": {
-                                "title": "角色管理",
-                                "icon": "role",
-                                "hidden": false,
-                                "keepAlive": true,
-                                "alwaysShow": false,
-                                "params": null
-                            }
-                        },
-                        {
-                            "path": "log",
-                            "component": "system/log/index",
-                            "name": "Log",
-                            "meta": {
-                                "title": "系统日志",
-                                "icon": "document",
-                                "hidden": false,
-                                "keepAlive": true,
-                                "alwaysShow": false,
-                                "params": null
-                            }
-                        },
-                        {
-                            "path": "config",
-                            "component": "system/config/index",
-                            "name": "Config",
-                            "meta": {
-                                "title": "系统配置",
-                                "icon": "setting",
-                                "hidden": false,
-                                "keepAlive": true,
-                                "alwaysShow": false,
-                                "params": null
-                            }
-                        }
-                    ]
-                },
-                {
-                    "path": "/video",
-                    "component": "Layout",
-                    "redirect": "/video/basis",
-                    "name": "/video",
-                    "meta": {
-                        "title": "影视管理",
-                        "icon": "video",
-                        "hidden": false,
-                        "alwaysShow": false,
-                        "params": null
-                    },
-                    "children": [
-                        {
-                            "path": "basis",
-                            "component": "video/basis/index",
-                            "name": "basis",
-                            "meta": {
-                                "title": "影视基础信息",
-                                "icon": "setting",
-                                "hidden": false,
-                                "keepAlive": true,
-                                "alwaysShow": false,
-                                "params": null
-                            }
-                        },
-                        {
-                            "path": "content",
-                            "component": "video/content/index",
-                            "name": "content",
-                            "meta": {
-                                "title": "影视内容信息",
-                                "icon": "setting",
-                                "hidden": false,
-                                "keepAlive": true,
-                                "alwaysShow": false,
-                                "params": null
-                            }
-                        }
-                    ]
-                }
-            ],
-            "msg": "一切ok"
-    })
-});
-router.get('/captcha', (req, res) => {
-res.send({
-    "code": "00000",
-    "data": {
-        "captchaKey": "4d5d1b76260d46fd9b9bb67704b4ada0",
-        "captchaBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAoCAYAAAA16j4lAAAC/klEQVR4Xu2ZzW8SQRTA+/+Y+F950Iu2xmg0fkU9GL2oiacmGk3QW60pNjExMVrbi22hUFOEQgvUWgO7JcvaBXbnubObbmem24JhFtjh/cjLzs57e+HHMB87AYjSTIgdiFqgYMVBwYoTS8Fnzq1ygZxM7ASHCQ3rQ3xiJfg0kaflxhkUrDgoWHFiJZgSJjKsD/GJnWAKrqJ7J5aCkd7hBFukDUkzDQ/25+BS/Y0bCa9N+2guSpzlpBeDpDCZ6hpxJxCsOSbc0mfgfO1VaNAcrYkKFBwNnmCHEHjUmA9k3tZmoGYbXrDSaQ1xPzIg5SyQojt/mvvePSe4qbu5FSCVdeYJ+agk8iQ8wWutCjdaF61CUPD1IMflaK0U9F0guSVf7MZiINjZ+OZfc4tAtF/iU1IZG8EvjQVO4o6tBwXVjsblXri1MiH1Kjir80eCVz4AqUn6EXVhbATf1Wc5iaZjBQVNYnE5WisFOoJ/+iM4GMlMm15pTZSwgrfurEPhchqK1zNQfZqHxlIdiCNnOhomnuBJd8XMSnSYedZ279jclFsrg1PnYLdv0HNwWOxOl0DSkiNgfbb039EPnuALtdecRHYhRdtsjtZGwTBW0TvP8mAsa9CutcCxbGhmG1C6meUk65//iI/1hSivl+iHriO4Q6IZwSLDEByGsaJzgiuPc2JJrAifg0krKDCimoNHFMe0OcGbV9fEkljRdRVd6dS5nOxV9KghCi5ey4glfSH+/fYS/RC6D16w8kHBl6j2wSOK8V3jBFefHH0XMhDl9RL9EH6Spb/zT7Kc4ydZtFYFyg83QPv4G6xtE2yjA85f25t/izcynGDaF2dG5ix60LASQ2MqBfVktPtwmbxtnQ2C5djbpDkzBff093CxnvCCtmlf1G+TBk17zwL90x7sPC/A9v0f3mJq80raa+8lynCw1RQfGVlEqew9vg9WABSsMKLcQw77UXDMQcGKg4IVBwUrDgpWHBSsOCh4DBAl4z5YMVDwGEClHgYLClYcFKw4/wA5Q4155LwUrwAAAABJRU5ErkJggg=="
-    },
-    "msg": "一切ok"
+             },
+            // {
+            //     id: "1-4",
+            //     name: "账号详情",
+            //     icon: "permission",
+            //     parent_id: "1",
+            //     type: "2",
+            //     url: "/account/detail",
+            //     hidden: true
+
+            // }
+        ]
+    },{
+        id: "2",
+        name: "影片管理",
+        parent_id: "0",
+        type: "2",
+        url: "/vodeo/list",
+        icon: "permission",
+        children: [
+            {
+                "id": "2-1",
+                "name": "基础信息",
+                "icon": "permission",
+                "parent_id": "1",
+                "type": "2",
+                "url": "/vodeo/list",
+            },
+            {
+                "id": "2-2",
+                "name": "详细信息",
+                "icon": "permission",
+                "parent_id": "2",
+                "type": "2",
+                "url": "/vodeo/detailslist",
+            },
+            {
+                "id": "2-3",
+                "name": "影片剧集",
+                "icon": "permission",
+                "parent_id": "3",
+                "type": "2",
+                "url": "/vodeo/episodeslist",
+            }
+        ]
+    }]
 })
 });
 module.exports = router;

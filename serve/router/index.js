@@ -1,7 +1,10 @@
 const express = require('express')
 const router = express.Router()
+const ExcelJS = require('exceljs');
 const fs = require('fs');
+const db = require('../db');
 const image = require("imageinfo"); 
+const mysql = require('mysql2/promise')
 
 // 主页路由
 router.get('/', (req, res) => {
@@ -19,6 +22,7 @@ router.get('/name/:name', (req, res) => {
 		name: "欢迎"+name
 	});
 });
+
 
 router.get('/img', function(req, res, next) {
 	if(req.query.url == null){
