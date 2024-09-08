@@ -18,7 +18,7 @@
 #### 使用说明
 
 ```bush
-cnpm i
+cnpm i|yarn
 npm run dev
 
 ```
