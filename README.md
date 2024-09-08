@@ -17,6 +17,13 @@
 
 #### 使用说明
 
+masami
+```bush
+yarn
+yarn run dev
+#运行不了，发行有打包的代码
+```
+后端
 ```bush
 cnpm i|yarn
 npm run dev
